@@ -1,0 +1,20 @@
+# Ignore node_modules (for Node.js projects)
+node_modules/
+
+# Ignore environment variables (e.g., secrets)
+.env
+
+# Ignore compiled files
+*.class
+*.pyc
+
+# Ignore logs
+logs/
+*.log
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+# Ignore VS Code settings
+.vscode/
