@@ -1,15 +1,19 @@
 import express from "express";
-import Users from "../models/users.js"
-import posts from "../models/posts.js"
+
+import User from "../models/user.js"
+import Post from "../models/post.js"
 
 var router = express.Router();
 
-
-// READ Users (GET /users)
 router.get("/", async (req, res) => {
   try {
-    const users = await Users.findAll();
-    res.json({ data: users });
+    const users = await User.findAll({
+      include: [{
+          model: Post,
+          attributes: ["id", "title", "content"],
+      },],
+    });
+    res.status(200).json(users);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -19,55 +23,81 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
   try {
     const id = parseInt(req.params.id);
-    const user = await Users.findByPk(id);
-    res.json({ data: user });
+    const user = await User.findByPk(id, {
+      include: [{
+          model: Post,
+          attributes: ["id", "title", "content"],
+        },],
+    });
+    if (!user) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+    res.status(200).json(user);
+
   } catch (error) {
+    console.log(error);
     res.status(500).json({ error: error.message });
   }
 });
 
 
-// CREATE User (POST /users)
 router.post("/", async (req, res) => {
   try {
     const { name, email, age } = req.body;
     const user = await Users.create({ name, email, age });
     res.status(201).json({ data: user });
   } catch (error) {
+    console.log("user post message",error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+router.put("/:id", async (req, res) => {
+  try {
+    const { name, email, age, posts } = req.body;
+    const id = parseInt(req.params.id);
+
+    const user = await Users.findByPk(id, {
+      include: [{ model: Post }] 
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    await Users.update(
+      { name, email, age },
+      { where: { id } }
+    );
+    if (posts && posts.length > 0) {
+      for (const post of posts) {
+        await Posts.update(
+          { title: post.title, content: post.content },
+          { where: { id: post.id, userId: id } }
+        );
+      }
+    }
+    const updatedUser = await Users.findByPk(id, {
+      include: [{ model: Post }]
+    });
+
+    res.json(updatedUser);
+  } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
 
 
-// UPDATE User (PUT /users/:id)
-router.put("/:id", async (req, res) => {
-  try {
-    const { name, email, age } = req.body;
-    const user = await Users.findByPk(req.params.id);
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    await Users.update({ name, email, age });
-    res.json({ data: user });
-  } catch (error) {
-    res.status(500).json({error: error.message });
-  }
-});
-
-// DELETE User (DELETE /users/:id)
 router.delete("/:id", async (req, res) => {
   try {
-
-    const user = await Users.findByPk(req.params.id);
-
+    const id = parseInt(req.params.id);
+    const user = await User.findByPk(id);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    await user.destroy();
-    res.json({message: "User deleted successfully" });
+    await user.destroy(); 
+    res.json({ message: "User and associated posts deleted successfully" });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

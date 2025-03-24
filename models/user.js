@@ -3,7 +3,7 @@
 import { Model } from "sequelize";
 
 export default (sequelize, DataTypes) => {
-  class USERS extends Model {
+  class USER extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -20,8 +20,8 @@ export default (sequelize, DataTypes) => {
     age: DataTypes.INTEGER
   }, {
     sequelize,
-    modelName: 'USERS',
+    modelName: 'USER',
     
   });
-  return USERS;
+  return USER;
 };

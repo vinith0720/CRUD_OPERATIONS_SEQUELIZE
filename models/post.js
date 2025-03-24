@@ -3,7 +3,7 @@
 import { Model } from "sequelize";
 
 export default (sequelize, DataTypes) => {
-  class POSTS extends Model {
+  class POST extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -20,8 +20,8 @@ export default (sequelize, DataTypes) => {
     userid: DataTypes.INTEGER
   }, {
     sequelize,
-    modelName: 'POSTS',
+    modelName: 'POST',
     
   });
-  return POSTS;
+  return POST;
 };

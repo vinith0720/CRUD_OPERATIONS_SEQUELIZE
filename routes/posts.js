@@ -1,13 +1,12 @@
 import express from "express";
 
-import {Users} from "../models/users.js"
-import {Posts} from "../models/posts.js"
+import Post from "../models/post.js"
 
 var router = express.Router();
 
 router.get("/", async (req, res) => {
     try {
-        const posts = await Posts.findAll();
+        const posts = await Post.findAll();
         if (!posts || posts.length === 0) {
             return res.status(200).json({ msg: "No posts found", posts: [] });
         }
@@ -25,7 +24,7 @@ router.post("/", async (req, res) => {
         if (!title || !content || !userid) {
             return res.status(400).json({ msg: "Title, content, and userid are required" });
         }
-        const newPost = await Posts.create({ title, content, userid });
+        const newPost = await Post.create({ title, content, userid });
         res.status(201).json({
             msg: "Post created successfully",
             post: newPost
@@ -40,8 +39,8 @@ router.post("/", async (req, res) => {
 router.put("/:id", async (req, res) => {
     try {
         const { title, content, userid } = req.body;
-        const id = parseInt(req.params.id, 10);
-        const post = await Posts.findByPk(id);
+        const id = parseInt(req.params.id);
+        const post = await Post.findByPk(id);
         if (!post) {
             return res.status(404).json({ msg: "Post not found" });
         }
@@ -49,7 +48,7 @@ router.put("/:id", async (req, res) => {
         const updatedContent = content ?? post.content;
         const updatedUserId = userid ?? post.userid;
 
-        const [updatedRows] = await Posts.update(
+        const [updatedRows] = await Post.update(
             { title: updatedTitle, content: updatedContent, userid: updatedUserId },
             { where: { id } }
         );
@@ -68,11 +67,11 @@ router.put("/:id", async (req, res) => {
 
 router.delete("/:id", async (req, res) => {
     try {
-        const id = parseInt(req.params.id, 10);
+        const id = parseInt(req.params.id);
         if (isNaN(id)) {
             return res.status(400).json({ msg: "Invalid ID format" });
         }
-        const post = await Posts.findByPk(id);
+        const post = await Post.findByPk(id);
         if (!post) {
             return res.status(404).json({ msg: "Post not found" });
         }
