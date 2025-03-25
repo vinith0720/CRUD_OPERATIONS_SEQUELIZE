@@ -1,7 +1,7 @@
 import express from "express";
 
 import db from "../models/index.js"; // Import entire db object
-const { User, Post } = db; // Extract models
+const { Post,User } = db; // Extract models
 
 var router = express.Router();
 
