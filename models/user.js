@@ -3,25 +3,28 @@
 import { Model } from "sequelize";
 
 export default (sequelize, DataTypes) => {
-  class USER extends Model {
+  class User extends Model {
     /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
+     * Define associations
      */
     static associate(models) {
-      // define association here
-      USERS.hasMany(models.Posts, { foreignKey: "userId" });
+      // Ensure the model name matches
+      User.hasMany(models.Post, { foreignKey: "userId", as: "posts" });
     }
   }
-  USERS.init({
-    name: DataTypes.STRING,
-    email: DataTypes.STRING,
-    age: DataTypes.INTEGER
-  }, {
-    sequelize,
-    modelName: 'USER',
-    
-  });
-  return USER;
+
+  User.init(
+    {
+      name: { type: DataTypes.STRING, allowNull: false },
+      email: { type: DataTypes.STRING, allowNull: false, unique: true },
+      age: { type: DataTypes.INTEGER, allowNull: false },
+    },
+    {
+      sequelize,
+      modelName: "User", // Ensure consistent model name (PascalCase)
+      tableName:"user"
+    }
+  );
+
+  return User;
 };

@@ -2,7 +2,7 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable("POST", {
+    await queryInterface.createTable("Post", {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -17,10 +17,10 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      userid: {
+      userId: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        references: { model: "USER", key: "id" }, // Fixed `reference` to `references`
+        references: { model: "User", key: "id" }, // Fixed `reference` to `references`
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
       },
@@ -36,6 +36,6 @@ module.exports = {
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable("POST");
+    await queryInterface.dropTable("Post");
   },
 };

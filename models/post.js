@@ -3,25 +3,28 @@
 import { Model } from "sequelize";
 
 export default (sequelize, DataTypes) => {
-  class POST extends Model {
+  class Post extends Model {
     /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
+     * Define associations
      */
     static associate(models) {
-      // define association here
-      POSTS.belongsTo(models.USERS,{foreignKey:"userId"})
+      // Ensure model names match
+      Post.belongsTo(models.User, { foreignKey: "userId", as: "user" });
     }
   }
-  POSTS.init({
-    title: DataTypes.STRING,
-    content: DataTypes.STRING,
-    userid: DataTypes.INTEGER
-  }, {
-    sequelize,
-    modelName: 'POST',
-    
-  });
-  return POST;
+
+  Post.init(
+    {
+      title: { type: DataTypes.STRING, allowNull: false },
+      content: { type: DataTypes.STRING, allowNull: false },
+      userId: { type: DataTypes.INTEGER, allowNull: false }, // Fix field name (camelCase)
+    },
+    {
+      sequelize,
+      modelName: "Post", // Ensure consistent model name
+      tableName :"post"
+    }
+  );
+
+  return Post;
 };

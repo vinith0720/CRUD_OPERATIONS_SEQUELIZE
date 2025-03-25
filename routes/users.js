@@ -1,20 +1,27 @@
 import express from "express";
+import { Sequelize } from "sequelize";
 
-import User from "../models/user.js"
-import Post from "../models/post.js"
+import db from "../models/index.js"; // Import entire db object
+const { User, Post } = db; // Extract models 
 
 var router = express.Router();
 
 router.get("/", async (req, res) => {
   try {
+    console.log(typeof User);
+    console.log(User instanceof Sequelize.Model);
+    console.log(User);
+    
     const users = await User.findAll({
       include: [{
           model: Post,
           attributes: ["id", "title", "content"],
+          as :"posts"
       },],
     });
     res.status(200).json(users);
   } catch (error) {
+    console.log(error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -27,6 +34,7 @@ router.get("/:id", async (req, res) => {
       include: [{
           model: Post,
           attributes: ["id", "title", "content"],
+          as :"posts"
         },],
     });
     if (!user) {
