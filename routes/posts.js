@@ -21,11 +21,11 @@ router.get("/", async (req, res) => {
 
 router.post("/", async (req, res) => {
     try {
-        const { title, content, userid } = req.body;
-        if (!title || !content || !userid) {
+        const { title, content, userId } = req.body;
+        if (!title || !content || !userId) {
             return res.status(400).json({ msg: "Title, content, and userid are required" });
         }
-        const newPost = await Post.create({ title, content, userid });
+        const newPost = await Post.create({ title, content, userId });
         res.status(201).json({
             msg: "Post created successfully",
             post: newPost
@@ -39,7 +39,7 @@ router.post("/", async (req, res) => {
 
 router.put("/:id", async (req, res) => {
     try {
-        const { title, content, userid } = req.body;
+        const { title, content, userId } = req.body;
         const id = parseInt(req.params.id);
         const post = await Post.findByPk(id);
         if (!post) {
@@ -47,10 +47,10 @@ router.put("/:id", async (req, res) => {
         }
         const updatedTitle = title ?? post.title;
         const updatedContent = content ?? post.content;
-        const updatedUserId = userid ?? post.userid;
+        const updatedUserId = userId ?? post.userId;
 
         const [updatedRows] = await Post.update(
-            { title: updatedTitle, content: updatedContent, userid: updatedUserId },
+            { title: updatedTitle, content: updatedContent, userId: updatedUserId },
             { where: { id } }
         );
 
