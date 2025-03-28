@@ -2,9 +2,6 @@ import express from "express";
 import { Sequelize } from "sequelize";
 
 import db from "../models/index.js"; 
-console.log("usr.js");
-
-console.log(db);
 
 const {Post,User } = db;  
 
