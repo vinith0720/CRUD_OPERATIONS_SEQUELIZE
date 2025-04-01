@@ -4,7 +4,7 @@ import { S3Client } from "@aws-sdk/client-s3";
 import dotenv from "dotenv";
 
 dotenv.config();
-
+const bucket = process.env.AWS_BUCKET
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "./public/images");
@@ -26,28 +26,30 @@ const upload = multer({
 });
 
 
-const s3 = S3Client({
+const s3 = new S3Client({
     region : process.env.AWS_REGION,
     Credentials:{
         accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-        secretAccessKey: process.env.AWS_SCRET_ACCESS_KEY    
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY    
     }
 });
 
 const awsUpload = multer({
     storage: multers3({
         s3:s3,
-        bucket:process.env.AWS_BUCKEET,
-        acl : "public-read",
+        bucket:process.env.AWS_BUCKET,
+        // acl : "public-read",
         metadata:(req,file,cb) =>{
-            cb(null,{fieldName:file.fieldName})
+            cb(null,{fieldName:file.fieldname})
         },
         key:(req,file,cd)=>{
-            const fieldName = `uploads/${Date.now()}-${file.originalname}`; 
+            const fileName = `uploads/${Date.now()}-${file.originalname}`; 
             cd(null,fileName)
         }
     }),
     limits :{fileSize : 5 * 1024 * 1024}
 });
 
-export {upload,awsUpload};
+export {bucket,upload,awsUpload,s3};
+
+// "fileUrl": "https://vinithtestingbucket.s3.ap-south-1.amazonaws.com/uploads/1743488710030-7002199.webp"
