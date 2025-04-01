@@ -53,9 +53,6 @@ router.delete("/aws",async(req,res) =>{
   try {
     const command = new DeleteObjectCommand(params);
     const result = await s3.send(command)
-    if(result.$metadata.httpStatusCode === 204){
-      res.status(204).send();
-    }
     res.status(200).json({msg: "deleted successully", result:result})
   } catch (error) {
     console.error('Error deleting file:', error);
